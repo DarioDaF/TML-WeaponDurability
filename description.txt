@@ -1,5 +1,11 @@
 What if weapons had durability in Terraria?
 
+Be sure to check the configurations of the mod to setup it in a sane way depending on the challenge you want!
+
+At the moment only items that do damage and have a damage stat in tooltip are intended to be affected, keep the broken item to repair them trough reforging.
+
+If you find any issues document them at https://github.com/DarioDaF/TML-WeaponDurability/issues so I can look into them.
+
 At the moment multiplayer is not considered or supported
 An equivalent mod for 1.4 tML is in the works and that will probably
 contain multiplayer support (cause it seems fun for standoff fights).
