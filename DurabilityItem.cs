@@ -1,16 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
-namespace Durability
+namespace WeaponDurability
 {
     class DurabilityItem : GlobalItem
     {
@@ -18,6 +14,19 @@ namespace Durability
         public override bool CloneNewInstances => true;
 
         public float durability;
+
+        public static int GetValueWithPrefix(Item item)
+        {
+            var x = new Item();
+            x.SetDefaults(item.type);
+            x.Prefix(item.prefix);
+            return x.value;
+        }
+
+        public void UpdateValue(Item item)
+        {
+            item.value = (int)(durability * GetValueWithPrefix(item));
+        }
 
         public static List<int> ProjShow = new List<int> {
             ProjectileID.RocketFireworkBlue,
@@ -33,28 +42,52 @@ namespace Durability
             {
                 durability = 0;
             }
+
+            var conf = ModContent.GetInstance<DurabilityConfig>();
+            if (conf.noStacking && IsWeapon(item) && (!item.consumable))
+            {
+                item.maxStack = 1; // Yep seems harsh but solves some bugz
+            }
         }
 
         public override bool PreDrawInInventory(Item item, SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            if (item.damage > 0)
+            if (IsWeapon(item))
             {
-                var r = new Rectangle((int)position.X, (int)position.Y, (int)(frame.Width * scale), (int)(frame.Height * scale));
-                var bottomR = r;
-                bottomR.Y += bottomR.Height;
-                bottomR.Height = (int)(bottomR.Height * .2f);
-                bottomR.X += bottomR.Width / 2;
-                bottomR.Width = (int)(Main.inventoryScale * 40);
-                bottomR.X -= bottomR.Width / 2;
 
-                var border = bottomR;
-                border.Inflate(1, 1);
-                Drawing.DrawRect(spriteBatch, border, Color.Black);
+                if (item.consumable)
+                {
+                    var r = new Rectangle((int)position.X, (int)position.Y, (int)(frame.Width * scale), (int)(frame.Height * scale));
+                    var bottomR = r;
+                    bottomR.Y += bottomR.Height;
+                    bottomR.Height = (int)(bottomR.Height * .2f);
+                    bottomR.X += bottomR.Width / 2;
+                    bottomR.Width = (int)(bottomR.Height);
+                    bottomR.X -= bottomR.Width / 2;
 
-                Drawing.DrawRect(spriteBatch, bottomR, Color.Red);
+                    var border = bottomR;
+                    border.Inflate(1, 1);
+                    Drawing.DrawRect(spriteBatch, border, Color.Black);
+                }
+                else
+                {
+                    var r = new Rectangle((int)position.X, (int)position.Y, (int)(frame.Width * scale), (int)(frame.Height * scale));
+                    var bottomR = r;
+                    bottomR.Y += bottomR.Height;
+                    bottomR.Height = (int)(bottomR.Height * .2f);
+                    bottomR.X += bottomR.Width / 2;
+                    bottomR.Width = (int)(Main.inventoryScale * 40);
+                    bottomR.X -= bottomR.Width / 2;
 
-                bottomR.Width = (int)(bottomR.Width * durability);
-                Drawing.DrawRect(spriteBatch, bottomR, Color.Green);
+                    var border = bottomR;
+                    border.Inflate(1, 1);
+                    Drawing.DrawRect(spriteBatch, border, Color.Black);
+
+                    Drawing.DrawRect(spriteBatch, bottomR, Color.Red);
+
+                    bottomR.Width = (int)(bottomR.Width * durability);
+                    Drawing.DrawRect(spriteBatch, bottomR, Color.Green);
+                }
             }
             return true;
         }
@@ -69,11 +102,13 @@ namespace Durability
         public override void Load(Item item, TagCompound tag)
         {
             durability = tag.GetFloat("DaF_Durability");
+            UpdateValue(item);
         }
 
         public static bool IsWeapon(Item item)
         {
-            return item.damage > 0;
+            // Should do damage and not be ammo (is any ammo standardly throwable??? idk)
+            return (item.damage > 0) && (item.ammo == AmmoID.None);
         }
 
         public override bool NeedsSaving(Item item)
@@ -98,7 +133,7 @@ namespace Durability
             return true;
         }
 
-        public static void ConsumeDurability(Item item, Player player)
+        public static bool ConsumeDurability(Item item, Player player)
         {
             var conf = ModContent.GetInstance<DurabilityConfig>();
             var ditem = item.GetGlobalItem<DurabilityItem>();
@@ -114,7 +149,7 @@ namespace Durability
             }
             else
             {
-                ditem.durability -= 1f / conf.uses;
+                ditem.durability -= 1f / (conf.uses * item.stack);
                 if (ditem.durability <= 0)
                 {
                     ditem.durability = 0;
@@ -123,7 +158,10 @@ namespace Durability
                         item.SetDefaults(ModContent.ItemType<DepleatedEoCShield>());
                     }
                 }
+                ditem.UpdateValue(item);
             }
+
+            return ditem.durability > 0;
         }
 
         public override void ExtractinatorUse(int extractType, ref int resultType, ref int resultStack)
@@ -156,14 +194,26 @@ namespace Durability
             }
         }
 
-        public static void RestoreDurability(Item item, Player player)
+        public override bool ReforgePrice(Item item, ref int reforgePrice, ref bool canApplyDiscount)
+        {
+            reforgePrice = GetValueWithPrefix(item);
+            return true;
+        }
+
+        public static bool RestoreDurability(Item item, Player player)
         {
             var ditem = item.GetGlobalItem<DurabilityItem>();
-            ditem.durability = 1;
-            if (item.type == ModContent.ItemType<DepleatedEoCShield>())
+            if (IsWeapon(item))
             {
-                item.SetDefaults(ItemID.EoCShield);
+                ditem.durability = 1;
+                if (item.type == ModContent.ItemType<DepleatedEoCShield>())
+                {
+                    item.SetDefaults(ItemID.EoCShield);
+                }
+                ditem.UpdateValue(item);
+                return true;
             }
+            return false;
         }
 
         public override bool CanUseItem(Item item, Player player)

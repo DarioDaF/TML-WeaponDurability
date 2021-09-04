@@ -1,15 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.UI.Chat;
 
-namespace Durability
+namespace WeaponDurability
 {
     class DurabilityPlayer : ModPlayer
     {
@@ -27,7 +25,34 @@ namespace Durability
                 //Durability.log = "...";
                 if (!player.HeldItem.IsAir)
                 {
-                    DurabilityItem.RestoreDurability(player.HeldItem, player);
+                    if (DurabilityItem.RestoreDurability(player.HeldItem, player))
+                    {
+                        if (player.selectedItem == 58)
+                        {
+                            Main.mouseItem = player.inventory[58].Clone(); // Refresh mouse item???
+                        }
+                        // Write in chat CHEATER
+                        Main.NewText("Item durability forcefully restored", Color.Red);
+                    }
+                }
+            }
+            if (Durability.FastSwap.JustPressed)
+            {
+                if (player.itemAnimation == 0 && player.itemTime == 0 && player.reuseDelay == 0)
+                {
+                    // Switch rows
+                    for (int col = 0; col < 10; ++col)
+                    {
+                        Item oldItem = player.inventory[col];
+                        for (int row = 4; row >= 0; --row)
+                        {
+                            int idx = row * 10 + col;
+                            // Swap oldItem with inventory[idx]
+                            Item tmp = player.inventory[idx];
+                            player.inventory[idx] = oldItem;
+                            oldItem = tmp;
+                        }
+                    }
                 }
             }
         }
@@ -85,7 +110,11 @@ namespace Durability
             if (item.IsAir || !DurabilityItem.IsWeapon(item))
                 return;
 
-            if (forcedUsing && player.itemAnimation > 0)
+            if (ItemID.Sets.gunProj[item.type])
+            {
+                // Skip it cause it's special and computed at proj subspawn level
+            }
+            else if (forcedUsing && player.itemAnimation > 0)
             {
                 //Durability.log += $"\n### FORCED {item.useStyle}";
                 DurabilityItem.ConsumeDurability(item, player);
@@ -105,7 +134,10 @@ namespace Durability
             }
             else if (duringUsing)
             {
-                if (player.itemTime == item.useTime)
+                //Durability.log += $"\n### DURING {item.useStyle} - {player.itemAnimation} / {player.itemAnimationMax}";
+                //Durability.log += $"\n>>> {player.reuseDelay}";
+                var killDatSickle = player.itemAnimation == player.itemAnimationMax - 1 && player.itemTime == 0;
+                if ((player.itemTime == item.useTime) || killDatSickle)
                 {
                     //Durability.log += $"\n### DURING {item.useStyle}";
                     DurabilityItem.ConsumeDurability(item, player);

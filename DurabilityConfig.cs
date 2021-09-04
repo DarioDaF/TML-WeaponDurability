@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using Terraria.ModLoader.Config;
 
-namespace Durability
+namespace WeaponDurability
 {
     class DurabilityConfig : ModConfig
     {
@@ -21,6 +16,11 @@ namespace Durability
         [Range(10, 120)]
         [DefaultValue(40)]
         public int summonTime;
+
+        [Label("Turret time [s]")]
+        [Range(10, 120)]
+        [DefaultValue(40)]
+        public int turretTime;
 
         [Label("Throw count")]
         [Range(1, 300)]
@@ -37,9 +37,18 @@ namespace Durability
         [DefaultValue(90)]
         public int sickThrow;
 
+        [Label("Yoyo max duration [s]")]
+        [Range(5, 25)]
+        [DefaultValue(16)]
+        public int yoyoMaxTime;
+
+        [Label("Patch stack mixing with no stacking")]
+        [DefaultValue(true)]
+        public bool noStacking;
+
         [Label("Ex probability [1/x]")]
-        [Range(1, 100)]
-        [DefaultValue(60)]
+        [Range(1, 1000)]
+        [DefaultValue(400)]
         public int exProb;
     }
 }

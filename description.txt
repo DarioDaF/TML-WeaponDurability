@@ -1,1 +1,11 @@
 What if weapons had durability in Terraria?
+
+At the moment multiplayer is not considered or supported
+An equivalent mod for 1.4 tML is in the works and that will probably
+contain multiplayer support (cause it seems fun for standoff fights).
+
+1.4.1 - Changed name and publish
+1.4 - Fixed "projectile" guns
+1.3.1 - Nerfing FlyingKnifes to be like yoyos
+1.3 - Yoyo balancing and stack patch
+1.2.1 - This time with less Sickles
