@@ -10,6 +10,7 @@ At the moment multiplayer is not considered or supported
 An equivalent mod for 1.4 tML is in the works and that will probably
 contain multiplayer support (cause it seems fun for standoff fights).
 
+1.4.4 - Fixes some magic weapons (e.g. NebulaArcanum) to not drop durability on fancy projectile spawns
 1.4.2 - Noop change to push icon
 1.4.1 - Changed name and publish
 1.4 - Fixed "projectile" guns

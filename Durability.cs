@@ -1,4 +1,7 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -48,9 +51,9 @@ namespace WeaponDurability
             ItemID.Sets.ExtractinatorMode[ItemID.SiltBlock] = oldSiltMode;
         }
 
-        //public static string log = "...";
-
         /*
+        public static string log = "...";
+
         public override void PostDrawInterface(SpriteBatch spriteBatch)
         {
             Utils.DrawBorderString(spriteBatch, log, new Vector2(20, 80), Color.Red);

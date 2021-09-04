@@ -135,7 +135,6 @@ namespace WeaponDurability
             else if (duringUsing)
             {
                 //Durability.log += $"\n### DURING {item.useStyle} - {player.itemAnimation} / {player.itemAnimationMax}";
-                //Durability.log += $"\n>>> {player.reuseDelay}";
                 var killDatSickle = player.itemAnimation == player.itemAnimationMax - 1 && player.itemTime == 0;
                 if ((player.itemTime == item.useTime) || killDatSickle)
                 {

@@ -66,6 +66,20 @@ namespace WeaponDurability
             */
         }
 
+        /*
+        public static Item GetFancyGunProjItem(Projectile projectile) {
+            if (!FancyGunProjs.Contains(projectile.type))
+                return null;
+
+            var player = Main.player[projectile.owner];
+            var item = player.HeldItem;
+            if (!ItemID.Sets.gunProj[item.type])
+                return null;
+
+            return item;
+        }
+        */
+
         public override bool PreAI(Projectile projectile)
         {
             /*
@@ -84,8 +98,13 @@ namespace WeaponDurability
                 // Spawned projs consume only one for pity
                 var player = Main.player[projectile.owner];
                 var item = player.HeldItem;
-                if (!DurabilityItem.ConsumeDurability(item, player)) {
-                    projectile.Kill();
+                if (ItemID.Sets.gunProj[item.type])
+                {
+                    //Durability.log += $"\n--- PostAI projectile kill: {countingSpawns}";
+                    if (!DurabilityItem.ConsumeDurability(item, player))
+                    {
+                        projectile.Kill();
+                    }
                 }
             }
             countingSpawns = -1;

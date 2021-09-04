@@ -50,5 +50,6 @@ namespace WeaponDurability
         [Range(1, 1000)]
         [DefaultValue(400)]
         public int exProb;
+
     }
 }
