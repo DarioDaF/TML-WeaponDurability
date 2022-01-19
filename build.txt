@@ -1,0 +1,4 @@
+displayName = Weapon Durability
+author = DarioDaF
+version = 0.0.7
+homepage = https://github.com/DarioDaF/TML-WeaponDurability

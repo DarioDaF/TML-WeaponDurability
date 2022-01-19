@@ -1,0 +1,17 @@
+What if weapons had durability in Terraria?
+
+Be sure to check the configurations of the mod to setup it in a sane way depending on the challenge you want!
+
+At the moment only items that do damage and have a damage stat in tooltip are intended to be affected, keep the broken item to repair them trough reforging.
+
+If you find any issues document them at https://github.com/DarioDaF/TML-WeaponDurability/issues specifying you encountered this in tModLoader for 1.4 so I can look into them.
+
+This is a early porting and probably doesn't work yet in multiplayer.
+An equivalent mod for 1.3 is already present in the browser.
+
+0.0.7 - Minimal fixes to make it build again, also now tML is release only so IL will stay broken until it's associate issue will get fixed in tML itself
+0.0.6 - Fixed typo in IL introduced in version 0.0.5 (still IL not working in release build)
+0.0.5 - Comply with LoadData/SaveData new API
+0.0.4 - Made hook more stable to not error out on a release build
+0.0.2 - Added flails balancing due to their new mechanics
+0.0.1 - Starts from 1.4.4 of the 1.3 Terraria mod
